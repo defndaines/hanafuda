@@ -11,7 +11,7 @@ scoring of related games and maybe even remember how to play them.
 
 ## License
 
-Copyright © 2017 Michael S. Daines
+Copyright © 2017–2018 Michael S. Daines
 
 Distributed under the Eclipse Public License either version 1.0 or (at
 your option) any later version.
