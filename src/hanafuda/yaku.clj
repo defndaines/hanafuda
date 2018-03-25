@@ -10,6 +10,10 @@
     (when (<= 10 (count カス))
       (count カス))))
 
+;; Bake-Fuda (Wild Card)
+;; The sake cup can be used as a plain card.
+;; If you have this, 9 plain cards and this card will be the Yaku of Kasu.
+
 (def kasu? plains?)
 (def カス? plains?)
 
@@ -79,6 +83,16 @@
   (let [brights (filter #(= :光 (:点 %)) hand)
         rainman? (seq (filter #(= :rainman (:type %)) brights))]
     (case (count brights)
-      5 15
-      4 (if rainman? 8 10)
-      3 (when-not rainman? 6))))
+      5 15 ; goko
+      4 (if rainman? 8 10) ; ame-shiko - shiko
+      3 (when-not rainman? 6)))) ; sanko
+
+
+(defn tsuki-fuda?
+  "All four cards in one month is four points."
+  [hand]
+  (->> (map :month hand)
+       frequencies
+       (filter (fn [[_ v]] (= 4 v)))
+       count
+       (* 4)))
