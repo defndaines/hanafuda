@@ -1,6 +1,8 @@
-(ns hanafuda.cards)
+(ns hanafuda.cards
+  "Hanafuda deck.")
 
 (def deck
+  "A full deck of hanafuda cards."
   [{:month :january
     :hana :matsu :花 :松 :flower :pine
     :points 1 :点 :カス
@@ -241,3 +243,59 @@
     :points 20 :点 :光
     :type :phoenix
     :image "kintengu-12s.png"}])
+
+
+(def months-in-order
+  "Vector of the months in order."
+  [:january :february :march :april :may :june :july :august :september
+   :october :november :december])
+
+(defn month-index
+  "Month index of a card. January is 0, December is 11."
+  [card]
+  (.indexOf months-in-order (:month card)))
+
+(defn earliest
+  "Return the earliest card of two, or :same if they are from the same month."
+  [card-one card-two]
+  (let [month-one (month-index card-one)
+        month-two (month-index card-two)]
+    (cond
+      (< month-one month-two) card-one
+      (< month-two month-one) card-two
+      :else :same)))
+
+
+(def types-in-order
+  "Vector of the types (:点) in order (for determining who goes first)."
+  [:光 :種 :短冊 :カス])
+
+(defn type-index
+  "Type index of a card. Brights are 0, normals are 3."
+  [card]
+  (.indexOf types-in-order (:点 card)))
+
+(defn higher-type-card
+  "Return the higher typed card of two, or :undefined if they are of the same
+  type."
+  [card-one card-two]
+  (let [type-one (type-index card-one)
+        type-two (type-index card-two)]
+    (cond
+      (< type-one type-two) card-one
+      (< type-two type-one) card-two
+      :else :same)))
+
+
+(defn who-goes-first
+  "Given two cards, one from each player, determine who starts play.  If the
+  cards are of different months, then the card closest to January goes first.
+  If both cards are of the same month, then the priority is brights, animals,
+  ribbons, kasu. If a winner cannot be determined, returns :same and both
+  players should submit a new card. This should only be necessary when
+  starting play; for subsequent rounds, the previous winner goes first."
+  [card-one card-two]
+  (let [earliest-card (earliest card-one card-two)]
+    (if (= :same earliest-card)
+      (higher-type-card card-one card-two)
+      earliest-card)))
